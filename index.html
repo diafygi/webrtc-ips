@@ -24,7 +24,7 @@
                     || window.mozRTCPeerConnection
                     || window.webkitRTCPeerConnection;
                 var mediaConstraints = {
-                    optional: [{RtpDataChannels: true}, {DtlsSrtpKeyAgreement: false}]
+                    optional: [{RtpDataChannels: true}]
                 };
 
                 //firefox already has a default stun server in about:config
@@ -32,9 +32,9 @@
                 //    [{"url": "stun:stun.services.mozilla.com"}]
                 var servers = undefined;
 
-                //add stun server for chrome
+                //add same stun server for chrome
                 if(window.webkitRTCPeerConnection)
-                    servers = {iceServers: [{url: "stun:stun.l.google.com:19302"}]};
+                    servers = {iceServers: [{urls: "stun:stun.services.mozilla.com"}]};
 
                 //construct a new RTCPeerConnection
                 var pc = new RTCPeerConnection(servers, mediaConstraints);
@@ -63,7 +63,7 @@
                 //create an offer sdp
                 pc.createOffer(function(result){
 
-                    //trigger the
+                    //trigger the stun server request
                     pc.setLocalDescription(result, function(){});
 
                 }, function(){});
