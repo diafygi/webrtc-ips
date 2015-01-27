@@ -79,8 +79,8 @@
                 var li = document.createElement("li");
                 li.textContent = ip;
 
-                //local IPs (TODO: 172.16.0.0/12)
-                if(ip.indexOf("10.") === 0 || ip.indexOf("192.168.") === 0)
+                if(ip.indexOf("10.") === 0 || ip.indexOf("192.168.") === 0 ||
+                /^172\.1[6-9]\./.test(ip) || /^172\.2\d\./.test(ip) || /^172\.3[0-1]\./.test(ip))
                     document.getElementsByTagName("ul")[0].appendChild(li);
 
                 //assume the rest are public IPs
