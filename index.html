@@ -80,7 +80,7 @@
                 li.textContent = ip;
 
                 //local IPs (TODO: 172.16.0.0/12)
-                if(ip.indexOf("10.") === 0 || ip.indexOf("192.168.") === 0)
+                if(ip.indexOf("10.") === 0 || ip.indexOf("192.168.") === 0 || ip.indexOf("169.254.") === 0)
                     document.getElementsByTagName("ul")[0].appendChild(li);
 
                 //assume the rest are public IPs
