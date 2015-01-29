@@ -62,7 +62,7 @@ function getIPs(callback){
     pc.createOffer(function(result){
 
         //trigger the stun server request
-        pc.setLocalDescription(result, function(){});
+        pc.setLocalDescription(result, function(){}, function(){});
 
     }, function(){});
 }
