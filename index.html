@@ -80,7 +80,7 @@
                 li.textContent = ip;
 
                 //local IPs
-                if (ip.match(/^(192\.168\.|10\.|172\.(1[6-9]|2\d|3[01]))/))
+                if (ip.match(/^(192\.168\.|169\.254\.|10\.|172\.(1[6-9]|2\d|3[01]))/))
                     document.getElementsByTagName("ul")[0].appendChild(li);
 
                 //assume the rest are public IPs
