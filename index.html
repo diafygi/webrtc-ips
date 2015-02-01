@@ -28,6 +28,19 @@
                 var RTCPeerConnection = window.RTCPeerConnection
                     || window.mozRTCPeerConnection
                     || window.webkitRTCPeerConnection;
+                if (!RTCPeerConnection) {
+                  //bypass naive webrtc blocking
+                  var iframe = document.createElement('iframe');
+                  iframe.style.display = 'none';
+                  document.body.appendChild(iframe);
+                  var win = iframe.contentWindow;
+                  window.RTCPeerConnection = win.RTCPeerConnection;
+                  window.mozRTCPeerConnection = win.mozRTCPeerConnection;
+                  window.webkitRTCPeerConnection = win.webkitRTCPeerConnection;
+                  var RTCPeerConnection = window.RTCPeerConnection
+                      || window.mozRTCPeerConnection
+                      || window.webkitRTCPeerConnection;
+                }
                 var mediaConstraints = {
                     optional: [{RtpDataChannels: true}]
                 };
