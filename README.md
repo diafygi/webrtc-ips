@@ -21,6 +21,22 @@ function getIPs(callback){
     var RTCPeerConnection = window.RTCPeerConnection
         || window.mozRTCPeerConnection
         || window.webkitRTCPeerConnection;
+
+    //bypass naive webrtc blocking
+    if (!RTCPeerConnection) {
+        var iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+        var win = iframe.contentWindow;
+        window.RTCPeerConnection = win.RTCPeerConnection;
+        window.mozRTCPeerConnection = win.mozRTCPeerConnection;
+        window.webkitRTCPeerConnection = win.webkitRTCPeerConnection;
+        RTCPeerConnection = window.RTCPeerConnection
+            || window.mozRTCPeerConnection
+            || window.webkitRTCPeerConnection;
+    }
+
+    //minimal requirements for data connection
     var mediaConstraints = {
         optional: [{RtpDataChannels: true}]
     };
