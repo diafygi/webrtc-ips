@@ -25,6 +25,8 @@ function getIPs(callback){
     //bypass naive webrtc blocking
     if (!RTCPeerConnection) {
         var iframe = document.createElement('iframe');
+        //invalidate content script
+        iframe.sandbox = 'allow-same-origin';
         iframe.style.display = 'none';
         document.body.appendChild(iframe);
         var win = iframe.contentWindow;
