@@ -92,7 +92,7 @@ function getIPs(callback){
         var lines = pc.localDescription.sdp.split('\n');
 
         lines.forEach(function(line) {
-            if (line.startsWith('a=candidate:')) {
+            if(line.indexOf('a=candidate:') === 0){
                 handleCandidate(line);
             }
         });
