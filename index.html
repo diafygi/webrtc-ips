@@ -28,21 +28,20 @@
                 var RTCPeerConnection = window.RTCPeerConnection
                     || window.mozRTCPeerConnection
                     || window.webkitRTCPeerConnection;
+                var useWebKit = !!window.webkitRTCPeerConnection;
 
                 //bypass naive webrtc blocking
-                if (!RTCPeerConnection) {
+                if(!RTCPeerConnection){
                     var iframe = document.createElement('iframe');
                     //invalidate content script
                     iframe.sandbox = 'allow-same-origin';
                     iframe.style.display = 'none';
                     document.body.appendChild(iframe);
                     var win = iframe.contentWindow;
-                    window.RTCPeerConnection = win.RTCPeerConnection;
-                    window.mozRTCPeerConnection = win.mozRTCPeerConnection;
-                    window.webkitRTCPeerConnection = win.webkitRTCPeerConnection;
-                    RTCPeerConnection = window.RTCPeerConnection
-                        || window.mozRTCPeerConnection
-                        || window.webkitRTCPeerConnection;
+                    RTCPeerConnection = win.RTCPeerConnection
+                        || win.mozRTCPeerConnection
+                        || win.webkitRTCPeerConnection;
+                    useWebKit = !!win.webkitRTCPeerConnection;
                 }
 
                 //minimal requirements for data connection
@@ -56,7 +55,7 @@
                 var servers = undefined;
 
                 //add same stun server for chrome
-                if(window.webkitRTCPeerConnection)
+                if(useWebKit)
                     servers = {iceServers: [{urls: "stun:stun.services.mozilla.com"}]};
 
                 //construct a new RTCPeerConnection
