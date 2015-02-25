@@ -21,21 +21,20 @@ function getIPs(callback){
     var RTCPeerConnection = window.RTCPeerConnection
         || window.mozRTCPeerConnection
         || window.webkitRTCPeerConnection;
+    var useWebKit = !!window.webkitRTCPeerConnection;
 
     //bypass naive webrtc blocking
-    if (!RTCPeerConnection) {
+    if(!RTCPeerConnection){
         var iframe = document.createElement('iframe');
         //invalidate content script
         iframe.sandbox = 'allow-same-origin';
         iframe.style.display = 'none';
         document.body.appendChild(iframe);
         var win = iframe.contentWindow;
-        window.RTCPeerConnection = win.RTCPeerConnection;
-        window.mozRTCPeerConnection = win.mozRTCPeerConnection;
-        window.webkitRTCPeerConnection = win.webkitRTCPeerConnection;
-        RTCPeerConnection = window.RTCPeerConnection
-            || window.mozRTCPeerConnection
-            || window.webkitRTCPeerConnection;
+        RTCPeerConnection = win.RTCPeerConnection
+            || win.mozRTCPeerConnection
+            || win.webkitRTCPeerConnection;
+        useWebKit = !!win.webkitRTCPeerConnection;
     }
 
     //minimal requirements for data connection
@@ -49,7 +48,7 @@ function getIPs(callback){
     var servers = undefined;
 
     //add same stun server for chrome
-    if(window.webkitRTCPeerConnection)
+    if(useWebKit)
         servers = {iceServers: [{urls: "stun:stun.services.mozilla.com"}]};
 
     //construct a new RTCPeerConnection
@@ -87,14 +86,13 @@ function getIPs(callback){
     }, function(){});
 
     //wait for a while to let everything done
-    setTimeout(function() {
+    setTimeout(function(){
         //read candidate info from local description
         var lines = pc.localDescription.sdp.split('\n');
 
-        lines.forEach(function(line) {
-            if (line.startsWith('a=candidate:')) {
+        lines.forEach(function(line){
+            if(line.startsWith('a=candidate:'))
                 handleCandidate(line);
-            }
         });
     }, 1000);
 }
