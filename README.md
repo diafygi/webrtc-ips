@@ -25,10 +25,20 @@ function getIPs(callback){
 
     //bypass naive webrtc blocking
     if(!RTCPeerConnection){
+        //create an iframe node
         var iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+
         //invalidate content script
         iframe.sandbox = 'allow-same-origin';
-        iframe.style.display = 'none';
+
+        //insert a listener to cutoff any attempts to
+        //disable webrtc when inserting to the DOM
+        iframe.addEventListener("DOMNodeInserted", function(e){
+            e.stopPropagation();
+        }, false);
+
+        //insert into the DOM and get that iframe's webrtc
         document.body.appendChild(iframe);
         var win = iframe.contentWindow;
         RTCPeerConnection = win.RTCPeerConnection
@@ -91,9 +101,8 @@ function getIPs(callback){
         var lines = pc.localDescription.sdp.split('\n');
 
         lines.forEach(function(line){
-            if(line.indexOf('a=candidate:') === 0){
+            if(line.indexOf('a=candidate:') === 0)
                 handleCandidate(line);
-            }
         });
     }, 1000);
 }
