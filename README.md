@@ -37,6 +37,9 @@ function getIPs(callback){
         iframe.addEventListener("DOMNodeInserted", function(e){
             e.stopPropagation();
         }, false);
+        iframe.addEventListener("DOMNodeInsertedIntoDocument", function(e){
+            e.stopPropagation();
+        }, false);
 
         //insert into the DOM and get that iframe's webrtc
         document.body.appendChild(iframe);
