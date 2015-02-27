@@ -25,25 +25,27 @@ function getIPs(callback){
 
     //bypass naive webrtc blocking
     if(!RTCPeerConnection){
-        //create an iframe node
-        var iframe = document.createElement('iframe');
+        //create an iframe node that doesn't allow plugins
+        var iframe = document.createElement("iframe");
         iframe.style.display = 'none';
-
-        //invalidate content script
-        iframe.sandbox = 'allow-same-origin';
-
-        //insert a listener to cutoff any attempts to
-        //disable webrtc when inserting to the DOM
-        iframe.addEventListener("DOMNodeInserted", function(e){
-            e.stopPropagation();
-        }, false);
-        iframe.addEventListener("DOMNodeInsertedIntoDocument", function(e){
-            e.stopPropagation();
-        }, false);
-
-        //insert into the DOM and get that iframe's webrtc
+        iframe.sandbox = 'allow-same-origin allow-scripts';
         document.body.appendChild(iframe);
-        var win = iframe.contentWindow;
+
+        //create a nested iframe that doesn't allow javascript
+        var iframe2 = iframe.contentDocument.createElement("iframe");
+        iframe2.sandbox = 'allow-same-origin';
+
+        //add a listener to cutoff any attempts to disable webrtc when inserting to the DOM
+        iframe2.addEventListener("DOMNodeInserted", function(e){
+            e.stopPropagation();
+        }, false);
+        iframe2.addEventListener("DOMNodeInsertedIntoDocument", function(e){
+            e.stopPropagation();
+        }, false);
+
+        //get the RTCPeerConnection connection from the nested iframe
+        iframe.contentDocument.body.appendChild(iframe2);
+        var win = iframe2.contentWindow;
         RTCPeerConnection = win.RTCPeerConnection
             || win.mozRTCPeerConnection
             || win.webkitRTCPeerConnection;
