@@ -19,6 +19,7 @@
         <ul></ul>
         <h4>Your public IP addresses:</h4>
         <ul></ul>
+        <iframe id="iframe" sandbox="allow-same-origin" style="display: none"></iframe>
         <script>
             //get the IP addresses associated with an account
             function getIPs(callback){
@@ -30,29 +31,14 @@
                     || window.webkitRTCPeerConnection;
                 var useWebKit = !!window.webkitRTCPeerConnection;
 
-                //bypass naive webrtc blocking
+                //bypass naive webrtc blocking using an iframe
                 if(!RTCPeerConnection){
-                    //create an iframe node that doesn't allow plugins
-                    var iframe = document.createElement("iframe");
-                    iframe.style.display = 'none';
-                    iframe.sandbox = 'allow-same-origin allow-scripts';
-                    document.body.appendChild(iframe);
-
-                    //create a nested iframe that doesn't allow javascript
-                    var iframe2 = iframe.contentDocument.createElement("iframe");
-                    iframe2.sandbox = 'allow-same-origin';
-
-                    //add a listener to cutoff any attempts to disable webrtc when inserting to the DOM
-                    iframe2.addEventListener("DOMNodeInserted", function(e){
-                        e.stopPropagation();
-                    }, false);
-                    iframe2.addEventListener("DOMNodeInsertedIntoDocument", function(e){
-                        e.stopPropagation();
-                    }, false);
-
-                    //get the RTCPeerConnection connection from the nested iframe
-                    iframe.contentDocument.body.appendChild(iframe2);
-                    var win = iframe2.contentWindow;
+                    //NOTE: you need to have an iframe in the page right above the script tag
+                    //
+                    //<iframe id="iframe" sandbox="allow-same-origin" style="display: none"></iframe>
+                    //<script>...getIPs called in here...
+                    //
+                    var win = iframe.contentWindow;
                     RTCPeerConnection = win.RTCPeerConnection
                         || win.mozRTCPeerConnection
                         || win.webkitRTCPeerConnection;
