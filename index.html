@@ -62,25 +62,28 @@
                 //construct a new RTCPeerConnection
                 var pc = new RTCPeerConnection(servers, mediaConstraints);
 
-                function handleCandidate(candidate){
+                function handleCandidate(candidate) {
                     //match just the IP address
-                    var ip_regex = /([0-9]{1,3}(\.[0-9]{1,3}){3})/
-                    var ip_addr = ip_regex.exec(candidate)[1];
+                    var ipv4_regex = /([0-9]{1,3}(\.[0-9]{1,3}){3})/;
+                    var ipv6_regex = /(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))/;
+                    var ip_addr = ipv4_regex.exec(candidate);
+
+                    if (!ip_addr || typeof ip_addr == 'undefined') {
+                        ip_addr = ipv6_regex.exec(ice.candidate.candidate);
+                    }
+                    if (ip_addr && typeof ip_addr != 'undefined') {
+                        ip_addr = ip_addr[1];
+                    } else {
+                        return callback("");
+                    }
 
                     //remove duplicates
-                    if(ip_dups[ip_addr] === undefined)
-                        callback(ip_addr);
+                    if (ip_dups[ip_addr] === undefined)
+                        return callback(ip_addr);
 
                     ip_dups[ip_addr] = true;
                 }
 
-                //listen for candidate events
-                pc.onicecandidate = function(ice){
-
-                    //skip non-candidate events
-                    if(ice.candidate)
-                        handleCandidate(ice.candidate.candidate);
-                };
 
                 //create a bogus data channel
                 pc.createDataChannel("");
