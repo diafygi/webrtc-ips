@@ -42,21 +42,14 @@ function getIPs(callback){
         optional: [{RtpDataChannels: true}]
     };
 
-    //firefox already has a default stun server in about:config
-    //    media.peerconnection.default_iceservers =
-    //    [{"url": "stun:stun.services.mozilla.com"}]
-    var servers = undefined;
-
-    //add same stun server for chrome
-    if(useWebKit)
-        servers = {iceServers: [{urls: "stun:stun.services.mozilla.com"}]};
+    var servers = {iceServers: [{urls: "stun:stun.services.mozilla.com"}]};
 
     //construct a new RTCPeerConnection
     var pc = new RTCPeerConnection(servers, mediaConstraints);
 
     function handleCandidate(candidate){
         //match just the IP address
-        var ip_regex = /([0-9]{1,3}(\.[0-9]{1,3}){3})/
+        var ip_regex = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/
         var ip_addr = ip_regex.exec(candidate)[1];
 
         //remove duplicates
