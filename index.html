@@ -46,6 +46,9 @@
                         || win.webkitRTCPeerConnection;
                     useWebKit = !!win.webkitRTCPeerConnection;
                 }
+                
+                if(!RTCPeerConnection) // if the user, disable webRTC on his browser!
+                    return;
 
                 //minimal requirements for data connection
                 var mediaConstraints = {
