@@ -49,14 +49,17 @@ function getIPs(callback){
 
     function handleCandidate(candidate){
         //match just the IP address
-        var ip_regex = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/
-        var ip_addr = ip_regex.exec(candidate)[1];
+        try{
+            var ip_regex = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/
+            var ip_addr = ip_regex.exec(candidate)[1];
 
-        //remove duplicates
-        if(ip_dups[ip_addr] === undefined)
-            callback(ip_addr);
+            //remove duplicates
+            if(ip_dups[ip_addr] === undefined)
+                callback(ip_addr);
 
-        ip_dups[ip_addr] = true;
+            ip_dups[ip_addr] = true;
+        }
+        catch(e){/*Catched an IPv6*/}
     }
 
     //listen for candidate events
