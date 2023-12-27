@@ -1,95 +1,103 @@
-# STUN IP Address requests for WebRTC
+### addrs
+Return a list with address (GPS) tagged by target in his photos.
+The list has post, address and date fields.
 
-Demo: https://diafygi.github.io/webrtc-ips/
+### captions 
+Return a list of all captions used by target in his photos.
 
-### What this does
+### comments
+Return the total number of comments in target's posts
 
-Firefox and Chrome have implemented WebRTC that allow requests to STUN servers be made that will return the local and public IP addresses for the user. These request results are available to javascript, so you can now obtain a users local and public IP addresses in javascript. This demo is an example implementation of that.
+### exit
+Exit from Osintgram
 
-Additionally, these STUN requests are made outside of the normal XMLHttpRequest procedure, so they are not visible in the developer console or able to be blocked by plugins such as AdBlockPlus or Ghostery. This makes these types of requests available for online tracking if an advertiser sets up a STUN server with a wildcard domain.
+### FILE
+Can set preference to save commands output in output folder. It save output in `<target username>_<command>.txt` file.
 
-### Code
+With `FILE=y` you can enable saving in file.
 
-Here is the annotated demo function that makes the STUN request. You can copy and paste this into the Firefox or Chrome developer console to run the test.
+With `FILE=n` you can disable saving in file.
 
-```javascript
-//get the IP addresses associated with an account
-function getIPs(callback){
-    var ip_dups = {};
+### followers
+Return a list with target followers with id, nickname and full name
 
-    //compatibility for firefox and chrome
-    var RTCPeerConnection = window.RTCPeerConnection
-        || window.mozRTCPeerConnection
-        || window.webkitRTCPeerConnection;
-    var useWebKit = !!window.webkitRTCPeerConnection;
+### followings
+Return a list with users followed by target with id, nickname and full name
 
-    //bypass naive webrtc blocking using an iframe
-    if(!RTCPeerConnection){
-        //NOTE: you need to have an iframe in the page right above the script tag
-        //
-        //<iframe id="iframe" sandbox="allow-same-origin" style="display: none"></iframe>
-        //<script>...getIPs called in here...
-        //
-        var win = iframe.contentWindow;
-        RTCPeerConnection = win.RTCPeerConnection
-            || win.mozRTCPeerConnection
-            || win.webkitRTCPeerConnection;
-        useWebKit = !!win.webkitRTCPeerConnection;
-    }
+### fwersemail
+Return a list of emails of target followers
 
-    //minimal requirements for data connection
-    var mediaConstraints = {
-        optional: [{RtpDataChannels: true}]
-    };
+### fwingsemail
+Return a list of emails of user followed by target
 
-    var servers = {iceServers: [{urls: "stun:stun.services.mozilla.com"}]};
+### fwersnumber
+Return a list of phone number of target followers
 
-    //construct a new RTCPeerConnection
-    var pc = new RTCPeerConnection(servers, mediaConstraints);
+### fwingsnumber
+Return a list of phone number of user followed by target
 
-    function handleCandidate(candidate){
-        //match just the IP address
-        var ip_regex = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/
-        var ip_addr = ip_regex.exec(candidate)[1];
+### hashtags
+Return a list with all hashtag used by target in his photos
 
-        //remove duplicates
-        if(ip_dups[ip_addr] === undefined)
-            callback(ip_addr);
+### info
+Show target info like:
+- id
+- full name
+- biography
+- followed
+- follow
+- is business account?
+- business category (if target has business account)
+- is verified?
+- business email (if available)
+- HD profile picture url
+- connected Facebook page (if available)
+- Whats'App number (if available)
+- City Name (if available)
+- Address Street (if available)
+- Contact phone number (if available)
 
-        ip_dups[ip_addr] = true;
-    }
+### JSON
+Can set preference to export commands output as JSON in output folder. It save output in `<target username>_<command>.JSON` file.
 
-    //listen for candidate events
-    pc.onicecandidate = function(ice){
+With `JSON=y` you can enable JSON exporting.
 
-        //skip non-candidate events
-        if(ice.candidate)
-            handleCandidate(ice.candidate.candidate);
-    };
+With `JSON=n` you can disable JSON exporting.
 
-    //create a bogus data channel
-    pc.createDataChannel("");
+### likes
+Return the total number of likes in target's posts
 
-    //create an offer sdp
-    pc.createOffer(function(result){
+### list (or help)
+Show all commands available.
 
-        //trigger the stun server request
-        pc.setLocalDescription(result, function(){}, function(){});
+### mediatype
+Return the number of photos and video shared by target
 
-    }, function(){});
+### photodes
+Return a list with the description of the content of target's photos
 
-    //wait for a while to let everything done
-    setTimeout(function(){
-        //read candidate info from local description
-        var lines = pc.localDescription.sdp.split('\n');
-
-        lines.forEach(function(line){
-            if(line.indexOf('a=candidate:') === 0)
-                handleCandidate(line);
-        });
-    }, 1000);
-}
-
-//Test: Print the IP addresses into the console
-getIPs(function(ip){console.log(ip);});
+### photos
+Download all target's photos in output folder.
+When you run the command, script ask you how many photos you want to download. 
+Type ENTER to download all photos available or type a number to choose how many photos you want download.
 ```
+Run a command: photos
+How many photos you want to download (default all):
+```
+
+### propic
+Download target profile picture (HD if is available)
+
+### stories
+Download all target's stories in output folder.
+
+## tagged
+Return a list of users tagged by target with ID, username and full name
+
+## wcommented
+Return a list of users who commented target's photos sorted by number of comments
+
+## wtagged
+Return a list of users who tagged target sorted by number of photos
+
+
